@@ -10,7 +10,7 @@ public class Main {
 		try {
 			AppGameContainer appgc;
 			appgc = new AppGameContainer(new PongGame());
-			appgc.setDisplayMode(appgc.getScreenWidth(), appgc.getScreenHeight(), true);
+			appgc.setDisplayMode(appgc.getScreenWidth(), appgc.getScreenHeight(), false);
 			appgc.setShowFPS(false);
 			appgc.setTargetFrameRate(PongGame.MAX_FPS);
 			appgc.start();
