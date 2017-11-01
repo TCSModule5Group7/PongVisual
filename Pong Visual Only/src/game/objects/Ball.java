@@ -5,6 +5,7 @@ import org.newdawn.slick.ImageBuffer;
 import org.newdawn.slick.SlickException;
 
 import game.math.NotInRangeException;
+import main.Main;
 
 public class Ball extends GameObject {
 
@@ -15,8 +16,9 @@ public class Ball extends GameObject {
 	}
 
 	@Override
-	public void draw(Graphics g, int screenWidth, int screenHeight) {
-		g.fillOval((float) (screenWidth * getPosition().getX()), (float) (screenHeight * getPosition().getY()), (int) (screenWidth * SIZE), (int) (screenWidth * SIZE));
+	public void draw(Graphics g) {
+		g.fillOval((float) (Main.WIDTH * getPosition().getX()), (float) (Main.HEIGHT * getPosition().getY()),
+				(int) (Main.WIDTH * SIZE), (int) (Main.WIDTH * SIZE));
 	}
 
 }
