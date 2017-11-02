@@ -42,6 +42,8 @@ public class ReceivingServer implements Runnable {
 						System.out.println(str);
 					} catch (IOException e) {
 						e.printStackTrace();
+					} catch(NullPointerException e) {
+						System.out.println("Lost connection to client");
 					}
 				}
 

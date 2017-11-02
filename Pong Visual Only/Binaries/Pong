@@ -1,0 +1,2 @@
+#!/bin/sh
+sudo java -jar -Djava.library.path=natives-linux PongVisual.jar
