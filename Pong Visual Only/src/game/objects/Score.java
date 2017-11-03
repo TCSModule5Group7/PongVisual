@@ -36,9 +36,9 @@ public class Score extends GameObject {
 		setScore(0);
 		
 		if (side == LEFT) {
-			setPosition(0.1,0.05);
+			setPosition(BLOCKSIZE*11.0/1024,0.05);
 		} else {
-			setPosition(0.8,0.05);
+			setPosition(1.0-(2*BLOCKSIZE*11.0/1024),0.05);
 		}
 	}
 
