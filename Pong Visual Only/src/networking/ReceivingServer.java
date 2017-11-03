@@ -22,8 +22,10 @@ public class ReceivingServer implements Runnable {
 	}
 	
 	public synchronized void sendCommand(String cmd) {
+		System.out.println("send command executed");
 		if (cmd.equals("start") || cmd.equals("stop") || cmd.equals("reset")) {
 		    commandQueue.add(cmd);
+		    System.out.println("command added to queue: " + cmd);
 		}
 	}
 	
@@ -70,7 +72,11 @@ public class ReceivingServer implements Runnable {
 
 						// check if there's a command in the queue to send
 						if (!commandQueue.isEmpty()) {
-							out.println(getCommand());
+							System.out.println("command ready to be sent");
+							String cmd = getCommand();
+							System.out.println("command: " + cmd);
+							out.write(cmd+"\n");
+							out.flush();
 						}
 
 						// print the received stuff

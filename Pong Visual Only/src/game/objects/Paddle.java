@@ -19,7 +19,7 @@ public class Paddle extends GameObject {
 	public Paddle(boolean side) throws SlickException, NotInRangeException {
 		super(0, 0, new Image("paddle.png"));
 		this.side = side;
-		this.setPosition(0.4);
+		this.setPosition(0.5);
 	}
 
 	public void setPosition(double y) {
