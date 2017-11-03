@@ -5,17 +5,20 @@ import org.newdawn.slick.SlickException;
 import game.math.NotInRangeException;
 import game.objects.Ball;
 import game.objects.Paddle;
+import game.objects.Score;
 
 public class SharedGameState {
 	private Paddle paddleL, paddleR;
 	private Ball ball;
-	private int scoreL, scoreR;
+	private Score scoreL, scoreR;
 
 	public SharedGameState() throws SlickException {
 		try {
 			paddleL = new Paddle(Paddle.LEFT);
 			paddleR = new Paddle(Paddle.RIGHT);
 			ball = new Ball();
+			scoreL = new Score(Score.LEFT);
+			scoreR = new Score(Score.RIGHT);
 		} catch (NotInRangeException e) {
 			// will never happen...
 			e.printStackTrace();
@@ -26,8 +29,8 @@ public class SharedGameState {
 		paddleL.setPosition(lPaddlePos);
 		paddleR.setPosition(rPaddlePos);
 		ball.setPosition(ballPosX, ballPosY);
-		scoreL = lScore;
-		scoreR = rScore;
+		scoreL.setScore(lScore);
+		scoreR.setScore(rScore);
 	}
 	
 	public Paddle getLeftPaddle() {
@@ -42,11 +45,11 @@ public class SharedGameState {
 		return ball;
 	}
 	
-	public int getLeftScore() {
+	public Score getLeftScore() {
 		return scoreL;
 	}
 	
-	public int getRightScore() {
+	public Score getRightScore() {
 		return scoreR;
 	}
 }

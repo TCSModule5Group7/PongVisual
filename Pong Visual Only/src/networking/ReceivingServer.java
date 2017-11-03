@@ -19,15 +19,16 @@ public class ReceivingServer implements Runnable {
 	@Override
 	public void run() {
 		ServerSocket ss = null;
+		boolean running = true;
 		try {
 			ss = new ServerSocket(PORT);
 		} catch (IOException e) {
 			System.out.println("Could not start server at port " + PORT);
+			running = false;
 		}
 		Socket soc;
 		String str;
 		BufferedReader in;
-		boolean running = true;
 
 		while (running) {
 			try {
@@ -45,11 +46,11 @@ public class ReceivingServer implements Runnable {
 									Double.parseDouble(split[2]), Double.parseDouble(split[3]),
 									Integer.parseInt(split[4]), Integer.parseInt(split[5]));
 						}
-						
+
 						if (str.equals("shutdown")) {
 							running = false;
 						}
-						
+
 						System.out.println(str);
 					} catch (IOException e) {
 						e.printStackTrace();
@@ -62,12 +63,14 @@ public class ReceivingServer implements Runnable {
 				System.out.println("Connection lost");
 			}
 		}
-		
-		try {
-			ss.close();
-		} catch (IOException e) {
-			System.out.println("An error occurred while trying to shutdown the server");
-		}
 
+		// if it is null it could not been initialized, therefore no need to shut it down
+		if (ss != null) {
+			try {
+				ss.close();
+			} catch (IOException e) {
+				System.out.println("An error occurred while trying to shutdown the server");
+			}
+		}
 	}
 }
