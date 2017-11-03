@@ -3,7 +3,7 @@ package GUI;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import networking.*;
+import networking.* ;
 
 
 
@@ -13,29 +13,34 @@ import networking.*;
 public class Menu {
     private JTextArea textArea1;
     private JButton StartAiGame;
-    private JButton Start1v1;
-    private JButton exit;
+    private JButton reset;
+    private JButton stop;
+    private ReceivingServer server;
+    private SharedGameState sgs;
 
     public Menu() {
 
-        ReceivingServer receivingServer = new Receivingserver();
+        sgs = new SharedGameState();
+        server = new ReceivingServer(sgs);
 
 
         StartAiGame.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                server.sendCommand("start");
+            }
+        });
+        reset.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                server.sendCommand("reset");
 
             }
         });
-        Start1v1.addActionListener(new ActionListener() {
+        stop.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-            }
-        });
-        exit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+                server.sendCommand("stop");
             }
         });
     }
