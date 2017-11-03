@@ -3,17 +3,34 @@ package networking;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class ReceivingServer implements Runnable {
 
 	public static final int PORT = 420;
 
 	private SharedGameState sharedGS;
+	
+	private ArrayList<String> commandQueue;
 
 	public ReceivingServer(SharedGameState sgs) {
 		sharedGS = sgs;
+		commandQueue = new ArrayList<>();
+	}
+	
+	public synchronized void sendCommand(String cmd) {
+		if (cmd.equals("start") || cmd.equals("stop") || cmd.equals("reset")) {
+		    commandQueue.add(cmd);
+		}
+	}
+	
+	public synchronized String getCommand() {
+		String cmd = commandQueue.get(0);
+		commandQueue.remove(0);
+		return cmd;
 	}
 
 	@Override
@@ -29,6 +46,7 @@ public class ReceivingServer implements Runnable {
 		Socket soc;
 		String str;
 		BufferedReader in;
+		PrintWriter out;
 
 		while (running) {
 			try {
@@ -36,10 +54,13 @@ public class ReceivingServer implements Runnable {
 
 				str = "";
 				in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
+				out = new PrintWriter(soc.getOutputStream());
 
 				while (!str.equals("quit")) {
 					try {
 						str = in.readLine();
+						
+						// check if game state has been sent
 						String[] split = str.split("/");
 						if (split.length == 6) {
 							sharedGS.update(Double.parseDouble(split[0]), Double.parseDouble(split[1]),
@@ -47,11 +68,13 @@ public class ReceivingServer implements Runnable {
 									Integer.parseInt(split[4]), Integer.parseInt(split[5]));
 						}
 
-						if (str.equals("shutdown")) {
-							running = false;
+						// check if there's a command in the queue to send
+						if (!commandQueue.isEmpty()) {
+							out.println(getCommand());
 						}
 
-						System.out.println(str);
+						// print the received stuff
+						System.out.println("received: " + str);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
