@@ -32,12 +32,11 @@ public abstract class GameObject {
 
 	public void draw(Graphics g) {
 		if (image != null) {
-			float posX = (float) (Main.WIDTH * position.getX());
-			float posY = (float) (Main.HEIGHT * position.getY());
-			float width = (float) (image.getWidth() * Main.WIDTH / 1600);
-			float height = (float) (image.getHeight() * Main.HEIGHT / 900);
-			g.drawImage(image, posX, posY, posX + width, posY + height,
-					0, 0, image.getWidth(), image.getHeight());
+			float width  = (float) (20 * Main.WIDTH / 1600);
+			float height = (float) (200 * Main.HEIGHT / 900);
+			float posX = (float) (Main.WIDTH * position.getX() - width / 2);
+			float posY = (float) (Main.HEIGHT * position.getY() - height / 2);
+			g.drawImage(image, posX, posY, posX + width, posY + height, 0, 0, image.getWidth(), image.getHeight());
 		}
 	}
 }
