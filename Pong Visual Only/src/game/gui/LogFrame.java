@@ -3,6 +3,7 @@ package game.gui;
 import java.awt.Color;
 import java.awt.Component;
 
+import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JFrame;
@@ -16,13 +17,19 @@ public class LogFrame extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
+	private DefaultListModel<LogMessage> model;
 
 	public LogFrame() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
+		setBackground(Color.BLACK);
 		contentPane = new JPanel();
 		
+		model = new DefaultListModel<>();
+		
 		JList<LogMessage> list = new JList<>();
+		list.setModel(model);
+		list.setBackground(Color.GRAY);
 		list.setCellRenderer(new ListCellRenderer<LogMessage>() {
 			@Override
 			public Component getListCellRendererComponent(JList<? extends LogMessage> list, LogMessage value, int index,
@@ -38,48 +45,6 @@ public class LogFrame extends JFrame {
 			}
 		});
 		JScrollPane scrollPane = new JScrollPane(list);
-		
-		// just test data
-		list.setListData(new LogMessage[] {
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("hkjhkjbkjyhgs", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("klfhsdfghsdjfds", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.ERROR),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.ERROR),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.ERROR),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.ERROR),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.ERROR),
-			new LogMessage("sdjfhsdkfhsjf", MessageType.MESSAGE)
-		});
 		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
@@ -102,7 +67,7 @@ public class LogFrame extends JFrame {
 		setContentPane(contentPane);
 	}
 	
-	public static void main(String[] args) {
-		new LogFrame().setVisible(true);
+	public void log(String s, MessageType t) {
+		model.addElement(new LogMessage(s,t));
 	}
 }

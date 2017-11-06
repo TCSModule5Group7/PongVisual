@@ -18,6 +18,7 @@ public class Main {
 			appgc.setShowFPS(false);
 			appgc.setTargetFrameRate(PongGame.MAX_FPS);
 			appgc.setAlwaysRender(true);
+			appgc.setVerbose(false);
 			appgc.start();
 		} catch (SlickException ex) {
 			ex.printStackTrace();

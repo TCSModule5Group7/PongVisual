@@ -8,6 +8,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import game.gui.LogFrame;
+import game.gui.MessageType;
+
 public class ReceivingServer implements Runnable {
 
 	public static final int PORT = 420;
@@ -15,16 +18,19 @@ public class ReceivingServer implements Runnable {
 	private SharedGameState sharedGS;
 	
 	private ArrayList<String> commandQueue;
+	private LogFrame logger;
 
 	public ReceivingServer(SharedGameState sgs) {
 		sharedGS = sgs;
 		commandQueue = new ArrayList<>();
+		logger = new LogFrame();
+		logger.setVisible(true);
 	}
 	
 	public synchronized void sendCommand(String cmd) {
 		if (cmd.equals("start") || cmd.equals("stop") || cmd.equals("reset")) {
 		    commandQueue.add(cmd);
-		    System.out.println("command added to queue: " + cmd);
+		    logger.log("command added to queue: " + cmd, MessageType.MESSAGE);
 		}
 	}
 	
@@ -41,7 +47,7 @@ public class ReceivingServer implements Runnable {
 		try {
 			ss = new ServerSocket(PORT);
 		} catch (IOException e) {
-			System.out.println("Could not start server at port " + PORT);
+			logger.log("Could not start server at port " + PORT, MessageType.ERROR);
 			running = false;
 		}
 		Socket soc;
@@ -72,13 +78,13 @@ public class ReceivingServer implements Runnable {
 						// check if there's a command in the queue to send
 						if (!commandQueue.isEmpty()) {
 							String cmd = getCommand();
-							System.out.println("command sent: " + cmd);
+							logger.log("command sent: " + cmd, MessageType.MESSAGE);
 							out.write(cmd+"\n");
 							out.flush();
 						}
 
 						// print the received stuff
-						System.out.println("received: " + str);
+						logger.log("received: " + str, MessageType.MESSAGE);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -86,8 +92,8 @@ public class ReceivingServer implements Runnable {
 
 				soc.close();
 			} catch (NullPointerException | IOException e) {
-				System.out.println("An error occurred while communicating with client");
-				System.out.println("Connection lost");
+				logger.log("An error occurred while communicating with client", MessageType.ERROR);
+				logger.log("Connection lost", MessageType.ERROR);
 			}
 		}
 
@@ -96,7 +102,7 @@ public class ReceivingServer implements Runnable {
 			try {
 				ss.close();
 			} catch (IOException e) {
-				System.out.println("An error occurred while trying to shutdown the server");
+				logger.log("An error occurred while trying to shutdown the server", MessageType.ERROR);
 			}
 		}
 	}
