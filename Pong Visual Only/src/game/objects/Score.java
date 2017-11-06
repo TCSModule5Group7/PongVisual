@@ -52,7 +52,7 @@ public class Score extends GameObject {
 		// hundreds
 		for (int x = 0; x < 3; x++) {
 			for (int y = 0; y < 5; y++) {
-				if (numberRepresentations[hundreds][y][x] == 0) {
+				if (hundreds == 0 || numberRepresentations[hundreds][y][x] == 0) {
 					fillBlock(x, y, 0, 0, 0);
 				} else {
 					fillBlock(x, y, 255, 255, 255);
@@ -68,7 +68,7 @@ public class Score extends GameObject {
 		// tens
 		for (int x = 4, nr = 0; x < 7; x++, nr++) {
 			for (int y = 0; y < 5; y++) {
-				if (numberRepresentations[tens][y][nr] == 0) {
+				if ((hundreds == 0 && tens == 0) || numberRepresentations[tens][y][nr] == 0) {
 					fillBlock(x, y, 0, 0, 0);
 				} else {
 					fillBlock(x, y, 255, 255, 255);
