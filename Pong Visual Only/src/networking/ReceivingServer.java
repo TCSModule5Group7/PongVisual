@@ -1,39 +1,31 @@
 package networking;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.util.ArrayList;
-
-import game.gui.LogFrame;
-import game.gui.MessageType;
 
 public class ReceivingServer implements Runnable {
 
-	public static final int PORT = 420;
+	public static final int PORT = 4200;
 
 	private SharedGameState sharedGS;
-	
+
 	private ArrayList<String> commandQueue;
-	private LogFrame logger;
 
 	public ReceivingServer(SharedGameState sgs) {
 		sharedGS = sgs;
 		commandQueue = new ArrayList<>();
-		logger = new LogFrame();
-		logger.setVisible(true);
 	}
-	
+
 	public synchronized void sendCommand(String cmd) {
+		System.out.println("send command executed");
 		if (cmd.equals("start") || cmd.equals("stop") || cmd.equals("reset")) {
-		    commandQueue.add(cmd);
-		    logger.log("command added to queue: " + cmd, MessageType.MESSAGE);
+			commandQueue.add(cmd);
+			System.out.println("command added to queue: " + cmd);
 		}
 	}
-	
+
 	public synchronized String getCommand() {
 		String cmd = commandQueue.get(0);
 		commandQueue.remove(0);
@@ -42,68 +34,68 @@ public class ReceivingServer implements Runnable {
 
 	@Override
 	public void run() {
-		ServerSocket ss = null;
+		DatagramSocket socket = null;
 		boolean running = true;
 		try {
-			ss = new ServerSocket(PORT);
+			socket = new DatagramSocket(PORT);
 		} catch (IOException e) {
-			logger.log("Could not start server at port " + PORT, MessageType.ERROR);
+			System.out.println("Could not start server at port " + PORT);
 			running = false;
 		}
-		Socket soc;
+
 		String str;
-		BufferedReader in;
-		PrintWriter out;
+		byte[] receiveBuffer = new byte[53];
+		DatagramPacket receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
 
 		while (running) {
 			try {
-				soc = ss.accept();
-
 				str = "";
-				in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
-				out = new PrintWriter(soc.getOutputStream());
 
 				while (!str.equals("quit")) {
 					try {
-						str = in.readLine();
-						
+						socket.receive(receivePacket);
+						str = new String(receivePacket.getData()).trim();
+						if (str.contains("\n")) {
+							str = str.substring(0, str.lastIndexOf("\n"));
+						}
+
 						// check if game state has been sent
 						String[] split = str.split("/");
 						if (split.length == 6) {
-							sharedGS.update(Double.parseDouble(split[0]), Double.parseDouble(split[1]),
-									Double.parseDouble(split[2]), Double.parseDouble(split[3]),
-									Integer.parseInt(split[4]), Integer.parseInt(split[5]));
+							try {
+								sharedGS.update(Double.parseDouble(split[0]), Double.parseDouble(split[1]),
+										Double.parseDouble(split[2]), Double.parseDouble(split[3]),
+										Integer.parseInt(split[4]), Integer.parseInt(split[5]));
+							} catch (NumberFormatException e) {
+								// Ignore
+							}
 						}
 
 						// check if there's a command in the queue to send
 						if (!commandQueue.isEmpty()) {
-							String cmd = getCommand();
-							logger.log("command sent: " + cmd, MessageType.MESSAGE);
-							out.write(cmd+"\n");
-							out.flush();
+							System.out.println("command ready to be sent");
+							String cmd = getCommand() + "\r\n";
+							System.out.println("command: " + cmd);
+							socket.send(new DatagramPacket(cmd.getBytes(), cmd.getBytes().length,
+									receivePacket.getAddress(), receivePacket.getPort()));
 						}
 
 						// print the received stuff
-						logger.log("received: " + str, MessageType.MESSAGE);
+						System.out.println("length=" + receivePacket.getLength() + ", received: " + str);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
 				}
-
-				soc.close();
-			} catch (NullPointerException | IOException e) {
-				logger.log("An error occurred while communicating with client", MessageType.ERROR);
-				logger.log("Connection lost", MessageType.ERROR);
+			} catch (NullPointerException e) {
+				System.out.println("An error occurred while communicating with client");
+				System.out.println("Connection lost");
 			}
 		}
 
-		// if it is null it could not been initialized, therefore no need to shut it down
-		if (ss != null) {
-			try {
-				ss.close();
-			} catch (IOException e) {
-				logger.log("An error occurred while trying to shutdown the server", MessageType.ERROR);
-			}
+		// if it is null it could not been initialized, therefore no need to shut it
+		// down
+		if (socket != null) {
+			socket.close();
 		}
 	}
 }
