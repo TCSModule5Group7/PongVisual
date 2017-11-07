@@ -21,6 +21,8 @@ public class ControlFrame extends JFrame {
 	public ControlFrame(ReceivingServer s) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 184, 207);
+		setResizable(false);
+		setTitle("Control");
 		contentPane = new JPanel();
 		
 		JButton btnStart = new JButton("start");
